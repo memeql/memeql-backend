@@ -1,3 +1,4 @@
 module.exports = {
-    demoCtrl: require('./demoCtrl')
+    demoCtrl: require('./demoCtrl'),
+    memesCtrl: require('./memesCtrl')
 }

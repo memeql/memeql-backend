@@ -60,6 +60,14 @@ const loginUser = async (req, res) => {
                 message: "Wrong email or password."
             })
         }
+        let options = {
+            maxAge: 180 * 60 * 1000,
+            httpOnly: true,
+            secure: true,
+            sameSite: "None",
+        }
+        const token = user.generateAccessJWT()
+        res.cookie("SessionID", token, options)
         const {password, ...userData} = user._doc
         res.status(200).json({
             status: "success",
@@ -67,6 +75,7 @@ const loginUser = async (req, res) => {
             message: "Login successful"
         })
     } catch (err) {
+        console.error(err)
         res.status(500).json({
             status: "error", 
             code: 500,

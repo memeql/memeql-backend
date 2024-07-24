@@ -5,14 +5,14 @@ const MemesSchema = new mongoose.Schema({
     image: String,
     owner_user_id: String,
     description: String,
-    tags: [{
-        String
-    }],
+    tags: [{String}],
     comments: [{
         owner_user_id: String,
         timestamp: Date,
         text: String
-    }]
+    }],
+    liked_by: [{String}],
+    seen_by: [{String}]
 });
 
 const Memes = mongoose.model("Memes", MemesSchema);

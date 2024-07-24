@@ -16,8 +16,7 @@ const UsersSchema = new mongoose.Schema(
             select: false
         },
         role: String,
-        email_validated: Boolean,
-        memes_seen: [{String}]
+        email_validated: Boolean
     },
     {timestamps: true}
 )

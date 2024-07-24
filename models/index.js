@@ -13,5 +13,6 @@ async function connectToMongo() {
 connectToMongo();
 
 module.exports = {
-    Memes: require('./Memes.js')
+    Memes: require('./Memes.js'),
+    Users: require('./Users.js')
 }

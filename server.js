@@ -1,13 +1,16 @@
 require("dotenv").config();
-const { PORT } = process.env;
+const { PORT, DATABASE_URL, SECRET_ACCESS_TOKEN } = process.env;
 const cors = require("cors");
 const express = require("express");
 const app = express();
-const routes = require('./routes/index.js')
+const routes = require('./routes/index.js');
+const cookieParser = require("cookie-parser");
 
-app.use(cors());
+app.use(cors())
+app.disable("x-powered-by")
+app.use(cookieParser())
 app.use(express.urlencoded({extended: true}))
-app.use(express.json());
+app.use(express.json())
 
 
 app.use('/', routes)

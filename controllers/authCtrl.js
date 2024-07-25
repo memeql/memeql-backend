@@ -123,7 +123,7 @@ const getCurrentUserInfo = async function (req, res, next) {
             const userData = {
                 id: user.id,
                 firstName: user.first_name,
-                lastName: user.first_name,
+                lastName: user.last_name,
                 email: user.email
             }
             req.userData = userData

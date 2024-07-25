@@ -1,7 +1,8 @@
 const router = require('express').Router();
 const { memesCtrl } = require('../controllers')
+const {authCtrl} = require('../controllers')
 
-router.use(memesCtrl.getCurrentUserInfo)
+router.use(authCtrl.getCurrentUserInfo)
 router.get('/', memesCtrl.getMemes)
 router.post('/', memesCtrl.createMeme)
 router.put('/:id', memesCtrl.updateMeme)

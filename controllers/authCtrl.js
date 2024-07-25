@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt")
 const db = require("../models")
+const jwt = require('jsonwebtoken')
+const accessToken = process.env.SECRET_ACCESS_TOKEN
 
 const registerUser = async (req, res) => {
     const {first_name, last_name, email, password} = req.body
@@ -86,7 +88,56 @@ const loginUser = async (req, res) => {
     res.end()   
 }
 
+const getCurrentUserInfo = async function (req, res, next) {
+    console.log(`in getCurrentUserInfo`)
+    const header = req.headers["cookie"]
+    if (header) {
+        const cookie = header.split('=')[1]
+        const cookieAccessToken = cookie.split(";")[0] // this will eventually be used by the cookie blacklist checking functionality below (logout)
+        // const checkIfBlacklisted = await CookieBlacklist.findOne({ token: cookieAccessToken })
+        // if (checkIfBlacklisted) {
+        //     const userData = {
+        //         id: null,
+        //         firstName: null,
+        //         lastName: null,
+        //         email: null
+        //     }
+        //     req.userData = userData
+        //     next()
+        //     return
+        // }
+        jwt.verify(cookie, accessToken, async(err, decoded) => {
+            if (err) {
+                const userData = {
+                    id: null,
+                    firstName: null,
+                    lastName: null,
+                    email: null
+                }
+                req.userData = userData
+                next()
+                return
+            }
+            const {id} = decoded
+            const user = await db.Users.findById(id).then(res =>{return res})
+            const userData = {
+                id: user.id,
+                firstName: user.first_name,
+                lastName: user.last_name,
+                email: user.email
+            }
+            req.userData = userData
+            console.log(`user session is valid, returning user data ${JSON.stringify(userData)}`)
+            next()
+        })
+    } else {
+        req.userData = false
+        next()
+    }
+}
+
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    getCurrentUserInfo
 }

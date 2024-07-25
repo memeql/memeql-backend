@@ -6,7 +6,24 @@ const app = express();
 const routes = require('./routes/index.js');
 const cookieParser = require("cookie-parser");
 
-app.use(cors())
+const allowedOrigins = [
+    'https://localhost:5173',
+    'https://memeql.com',
+    'https://dev.memeql.com',
+    // Add other origins as needed
+]
+
+const corsOptionsDelegate = (req, callback) => {
+    let corsOptions
+    if (allowedOrigins.includes(req.header('Origin'))) {
+      corsOptions = { origin: true, credentials: true }
+    } else {
+      corsOptions = { origin: false }
+    }
+    callback(null, corsOptions)
+}
+
+app.use(cors(corsOptionsDelegate))
 app.disable("x-powered-by")
 app.use(cookieParser())
 app.use(express.urlencoded({extended: true}))

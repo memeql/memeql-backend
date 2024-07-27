@@ -14,5 +14,6 @@ connectToMongo();
 
 module.exports = {
     Memes: require('./Memes.js'),
-    Users: require('./Users.js')
+    Users: require('./Users.js'),
+    Comments: require('./Comments.js')
 }

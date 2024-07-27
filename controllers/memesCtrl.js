@@ -1,4 +1,5 @@
 const db = require("../models")
+const {handleFileTransferToBlobStorage} = require('../helpers/transferMemeToAzureStorage.js')
 
 const getMemes = (req, res) => {
     console.log(`in get memes`)
@@ -30,6 +31,7 @@ const updateMeme = (req, res) => {
 }
 
 const createMeme = (req, res) => {
+    req.body.image = handleFileTransferToBlobStorage(req.body.image)
     db.Memes.create(req.body)
         .then((createdMeme) => {
             if (!createdMeme) {

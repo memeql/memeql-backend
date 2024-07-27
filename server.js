@@ -31,6 +31,6 @@ app.use(express.json())
 
 
 app.use('/', routes)
-app.use((req, res) => {res.status(404).json({message: "NOT A PROPER ROUTE"})})
+app.use((req, res) => {res.status(404).json({message: "NOT A PROPER ROUTE", data: [JSON.stringify(req.path)]})})
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`));

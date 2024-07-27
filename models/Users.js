@@ -18,7 +18,10 @@ const UsersSchema = new mongoose.Schema(
             select: false
         },
         role: String,
-        email_validated: Boolean
+        email_validated: {
+            type: Boolean,
+            default: false
+        }
     },
     {timestamps: true}
 )

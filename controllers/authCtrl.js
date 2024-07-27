@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt")
 const db = require("../models")
 const jwt = require('jsonwebtoken')
 const accessToken = process.env.SECRET_ACCESS_TOKEN
+const {sendEmail} = require('../helpers/sendEmail.js')
 
 const registerUser = async (req, res) => {
     const {first_name, last_name, email, password} = req.body
@@ -22,6 +23,8 @@ const registerUser = async (req, res) => {
         }
         const savedUser = await newUser.save()
         const userData = savedUser._doc
+        const validationURL = req.protocol + '://' + req.get('host') + `/auth/userValidation/${userData._id}`
+        sendEmail(userData.email, "New Account Confirmation from MemeQL.com", `<p>Please click on the link below to confirm your email.</p><p><a href=${validationURL}>Click this link!</a></p>`)
         res.status(200).json({
             status: "success",
             data: [userData],
@@ -39,6 +42,29 @@ const registerUser = async (req, res) => {
     res.end()
 }
 
+const validateUser = async (req, res) => {
+    userId = req.params.userId
+    const user = await db.Users.findById(userId)
+    console.log(user.email_validated)
+    if (user.email_validated) {
+        res.status(200).json({
+            status: "success",
+            code: 200,
+            data: [],
+            message: "This account was already validated."
+        })
+    } else {
+        user.email_validated = true
+        await db.Users.findByIdAndUpdate(userId, user)
+        res.status(200).json({
+            status: "success",
+            code: 200,
+            data: [],
+            message: "Account validation completed."
+        })
+    }
+}
+
 const loginUser = async (req, res) => {
     console.log('in the login')
     console.log(req.body)
@@ -52,6 +78,13 @@ const loginUser = async (req, res) => {
                 status: "failed",
                 data: [],
                 message: "Wrong email or password."
+            })
+        }
+        if (!user.email_validated) {
+            return res.status(401).json({
+                status: "failed",
+                data: [],
+                message: "Account validation incomplete, check your email."
             })
         }
         const isPasswordValid = await bcrypt.compare(`${req.body.password}`, user.password)
@@ -139,5 +172,6 @@ const getCurrentUserInfo = async function (req, res, next) {
 module.exports = {
     registerUser,
     loginUser,
-    getCurrentUserInfo
+    getCurrentUserInfo,
+    validateUser
 }

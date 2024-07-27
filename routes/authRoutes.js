@@ -3,6 +3,6 @@ const { authCtrl } = require('../controllers')
 
 router.post('/', authCtrl.registerUser)
 router.post('/login', authCtrl.loginUser)
-router.post('/userValidation/:userId', authCtrl.validateUser)
+router.get('/userValidation/:userId', authCtrl.validateUser)
 
 module.exports = router

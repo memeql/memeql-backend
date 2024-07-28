@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const CookieBlacklist = require("./CookieBlacklist.js");
 const { DATABASE_URL } = process.env
 
 async function connectToMongo() {
@@ -15,5 +16,6 @@ connectToMongo();
 module.exports = {
     Memes: require('./Memes.js'),
     Users: require('./Users.js'),
-    Comments: require('./Comments.js')
+    Comments: require('./Comments.js'),
+    CookieBlacklist: require('./CookieBlacklist.js')
 }

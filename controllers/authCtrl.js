@@ -126,28 +126,16 @@ const getCurrentUserInfo = async function (req, res, next) {
     const header = req.headers["cookie"]
     if (header) {
         const cookie = header.split('=')[1]
-        const cookieAccessToken = cookie.split(";")[0] // this will eventually be used by the cookie blacklist checking functionality below (logout)
-        // const checkIfBlacklisted = await CookieBlacklist.findOne({ token: cookieAccessToken })
-        // if (checkIfBlacklisted) {
-        //     const userData = {
-        //         id: null,
-        //         firstName: null,
-        //         lastName: null,
-        //         email: null
-        //     }
-        //     req.userData = userData
-        //     next()
-        //     return
-        // }
+        const cookieAccessToken = cookie.split(";")[0] 
+        const checkIfBlacklisted = await db.CookieBlacklist.findOne({ token: cookieAccessToken })
+        if (checkIfBlacklisted) {
+            req.userData = false
+            next()
+            return
+        }
         jwt.verify(cookie, accessToken, async(err, decoded) => {
             if (err) {
-                const userData = {
-                    id: null,
-                    firstName: null,
-                    lastName: null,
-                    email: null
-                }
-                req.userData = userData
+                req.userData = false
                 next()
                 return
             }
@@ -169,9 +157,37 @@ const getCurrentUserInfo = async function (req, res, next) {
     }
 }
 
+const logoutUser = async (req, res) => {
+    try {
+        const authHeader = req.headers['cookie']
+        const cookie = authHeader.split('=')[1]
+        const accessToken = cookie.split(';')[0]
+        const checkIfBlacklisted = await db.CookieBlacklist.findOne({token: accessToken})
+        if (!checkIfBlacklisted) {
+            await db.CookieBlacklist.create({token: accessToken})
+        }
+        res.setHeader('Clear-Site-Data', '"cookies"')
+        res.status(200).json({
+            status: "success",
+            code: 200,
+            data: [],
+            message: "User logged out, goodbye"
+        })
+    } catch (err) {
+        console.error(err)
+        res.status(200).json({
+            status: "error",
+            code: 500,
+            data: [err],
+            message: "Logout failed"
+        })
+    }
+}
+
 module.exports = {
     registerUser,
     loginUser,
     getCurrentUserInfo,
-    validateUser
+    validateUser,
+    logoutUser
 }

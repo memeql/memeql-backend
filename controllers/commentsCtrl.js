@@ -1,5 +1,19 @@
 const db = require('../models')
 
+const getComments = (req, res) => {
+    db.Comments.find({})
+    .then((foundComments) => {
+        if (!foundComments) {
+            res.status(404).json({ message: 'Cannot find comments' })
+        } else if (!req.userData.id) {
+            console.log(`in get memes, no auth`)
+            res.status(401).json({ message: 'User unauthenticated' })
+        } else {
+            res.status(200).json({ data: foundComments })
+        }
+    })
+}
+
 const getCommentsByMemeId = (req, res) => {
     const memeId = req.params.memeId
     db.Comments.find({parent_meme_id: memeId})
@@ -29,6 +43,7 @@ const updateComment = (req, res) => {
 }
 
 const createComment = (req, res) => {
+    req.body.author_user_id = req.userData.id
     db.Comments.create(req.body)
         .then((createdComment) => {
             if (!createdComment) {
@@ -56,6 +71,7 @@ const deleteComment = (req, res) => {
 }
 
 module.exports = {
+    getComments,
     getCommentsByMemeId,
     createComment,
     updateComment,

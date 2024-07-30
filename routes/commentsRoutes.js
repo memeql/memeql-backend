@@ -3,6 +3,7 @@ const { commentsCtrl } = require('../controllers')
 const { authCtrl } = require('../controllers')
 
 router.use(authCtrl.getCurrentUserInfo)
+router.get('/', commentsCtrl.getComments)
 router.get('/getByMemeId/:memeId', commentsCtrl.getCommentsByMemeId)
 router.post('/', commentsCtrl.createComment)
 router.put('/:id', commentsCtrl.updateComment)

@@ -157,6 +157,51 @@ const getCurrentUserInfo = async function (req, res, next) {
     }
 }
 
+const returnCurrentUserInfo = async (req, res) => {
+    const header = req.headers["cookie"]
+    if (header) {
+        const cookie = header.split('=')[1]
+        const cookieAccessToken = cookie.split(";")[0] 
+        const checkIfBlacklisted = await db.CookieBlacklist.findOne({ token: cookieAccessToken })
+        
+        if (checkIfBlacklisted) {
+            const userData = null
+            res.status(400).json({
+                status: "failure",
+                code: 400,
+                data: [userData],
+                message: "Attempting to log in with a logged out token, reauthenticate."
+            })
+        }
+        jwt.verify(cookie, accessToken, async(err, decoded) => {
+            if (err) {
+                const userData = null
+                res.status(400).json({
+                    status: "failure",
+                    code: 400,
+                    data: [userData],
+                    message: "Error during getting user data"
+                })
+            }
+            const {id} = decoded
+            const user = await db.Users.findById(id).then(res =>{return res})
+            res.status(200).json({
+                status: "success",
+                code: 200,
+                data: [user],
+                message: "Returning user data"
+            })
+        })
+    } else {
+        res.status(400).json({
+            status: "failure",
+            code: 400,
+            data: [],
+            message: "No headers sent, user data cannot be retrieved"
+        })
+    }
+}
+
 const logoutUser = async (req, res) => {
     try {
         const authHeader = req.headers['cookie']
@@ -189,5 +234,6 @@ module.exports = {
     loginUser,
     getCurrentUserInfo,
     validateUser,
-    logoutUser
+    logoutUser, 
+    returnCurrentUserInfo
 }

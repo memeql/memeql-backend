@@ -32,6 +32,7 @@ const updateMeme = (req, res) => {
 
 const createMeme = (req, res) => {
     req.body.image = handleFileTransferToBlobStorage(req.body.image)
+    req.body.owner_user_id = req.userData.id
     db.Memes.create(req.body)
         .then((createdMeme) => {
             if (!createdMeme) {

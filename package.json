@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@azure-rest/ai-content-safety": "^1.0.0",
     "@azure/storage-blob": "^12.24.0",
     "axios": "^1.7.2",
     "bcrypt": "^5.1.1",

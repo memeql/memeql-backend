@@ -9,6 +9,7 @@ const cookieParser = require("cookie-parser");
 const allowedOrigins = [
     'https://localhost:5173',
     'https://memeql.com',
+    'https://memeql.konthecat.com',
     'https://dev.memeql.com',
     // Add other origins as needed
 ]

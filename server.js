@@ -11,6 +11,7 @@ const allowedOrigins = [
     'https://memeql.com',
     'https://memeql.konthecat.com',
     'https://dev.memeql.com',
+    'https://dev.memeql.konthecat.com/'
     // Add other origins as needed
 ]
 
